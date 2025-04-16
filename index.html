@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Song Downloader</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #1db954, #191414);
+      color: #fff;
+      text-align: center;
+      padding: 50px;
+    }
+
+    input {
+      width: 60%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 30px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #1db954;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .lightbox {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .lightbox.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .lightbox-content {
+      background: #121212;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      position: relative;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .lightbox iframe {
+      width: 100%;
+      height: 280px;
+      border-radius: 10px;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .download-btn {
+      background: #ff3e3e;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <h1>YouTube MP3 Downloader</h1>
+  <input type="text" id="url" placeholder="Enter YouTube URL">
+  <br>
+  <button onclick="openPreview()">Preview & Download</button>
+
+  <div id="lightbox" class="lightbox">
+    <div class="lightbox-content">
+      <span class="close" onclick="closePreview()">&times;</span>
+      <iframe id="ytPlayer" src="" frameborder="0" allowfullscreen></iframe>
+      <a id="downloadLink" href="#" target="_blank">
+        <button class="download-btn">Download MP3</button>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    function extractVideoID(url) {
+      const regExp = /(?:youtube\.com.*(?:\\?|&)v=|youtu\.be\/)([^&\\n?#]+)/;
+      const match = url.match(regExp);
+      return match && match[1];
+    }
+
+    function openPreview() {
+      const url = document.getElementById('url').value;
+      const videoId = extractVideoID(url);
+
+      if (!videoId) {
+        alert('Invalid YouTube URL');
+        return;
+      }
+
+      const embedURL = `https://www.youtube.com/embed/${videoId}`;
+      document.getElementById('ytPlayer').src = embedURL;
+
+      // Download API call
+      document.getElementById('downloadLink').href = `/download?url=${encodeURIComponent(url)}`;
+
+      document.getElementById('lightbox').classList.add('show');
+    }
+
+    function closePreview() {
+      document.getElementById('lightbox').classList.remove('show');
+      document.getElementById('ytPlayer').src = "";
+    }
+  </script>
+</body>
+</html>
